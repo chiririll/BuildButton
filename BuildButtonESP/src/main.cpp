@@ -1,14 +1,19 @@
 #include <Arduino.h>
 
 #include "Pins.h"
+#include "WiFiManager.h"
 
 #include "Systems/Sleep.h"
+#include "Systems/Updater.h"
 
 #include "Systems/Button.h"
 #include "Systems/Speaker.h"
 #include "Systems/NFC.h"
 
+WiFiManager wifi;
+
 Sleep sleep;
+Updater updater;
 
 Button button(BUTTON_PIN);
 Speaker speaker(SPEAKER_PIN);
@@ -21,6 +26,10 @@ void setup()
 {
     Serial.begin(115200);
     Serial.println();
+
+    wifi.init();
+
+    updater.init(&wifi, &speaker);
 }
 
 void loop()
@@ -33,7 +42,10 @@ void updateSystems()
 {
     bool isActive = false;
 
+    isActive = wifi.loop() || isActive;
     isActive = speaker.loop() || isActive;
+
+    isActive = updater.loop() || isActive;
     isActive = nfc.loop() || isActive;
 
     sleep.check(isActive);
@@ -52,8 +64,7 @@ void checkActions()
         // TODO: Start action
         break;
     case ButtonAction::Hold:
-        speaker.speak(SpeakerSignal::LongBeep);
-        // TODO: Start action
+        updater.toggle();
         break;
     default:
         return;

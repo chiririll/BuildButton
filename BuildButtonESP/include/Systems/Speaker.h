@@ -6,11 +6,14 @@
 enum class SpeakerSignal
 {
     None = 0,
-    Beep = 0b00000001,       // short beep
-    DoubleBeep = 0b00000101, // two short beeps
-    TripleBeep = 0b0010101,  // three short beeps
-    LongBeep = 0b00001111,   // sustained beep
-    ErrorTone = 0b01010101,  // fast repeated beeps
+    Beep = 0b00000001,
+    DoubleBeep = 0b00000101,
+    TripleBeep = 0b0010101,
+    LongBeep = 0b00001111,
+    ErrorTone = 0b01010101,
+
+    OTAEnable = 0b00001011,
+    OTADisable = 0b00101011,
 };
 
 class Speaker
