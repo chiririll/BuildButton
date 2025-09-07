@@ -24,8 +24,8 @@ public:
     bool loop();
 
 private:
-    const ulong beepDelay = 200;
-    const ulong gapDelay = 150;
+    const ulong beepDelay = 100;
+    const ulong gapDelay = 75;
 
     uint8_t m_pin;
 

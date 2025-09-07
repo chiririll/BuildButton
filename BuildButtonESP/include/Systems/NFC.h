@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <MFRC522.h>
+#include <NfcAdapter.h>
 
 #include "Systems/Speaker.h"
 
@@ -26,13 +27,13 @@ private:
     const uint readSignal = 0b00010101;
 
     const ulong startupDelay = 10;
-    const ulong queryInterval = 100;
+    const ulong queryInterval = 200;
     const ulong enableDuration = 10000;
 
-    MFRC522::MIFARE_Key m_key = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-
     Speaker *m_speaker;
-    MFRC522 m_nfc;
+
+    MFRC522 m_mfrc;
+    NfcAdapter m_nfc;
 
     bool m_isActive;
 
