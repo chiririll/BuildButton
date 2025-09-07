@@ -1,45 +1,63 @@
 #include <Arduino.h>
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
 
-#include "WiFiCred.hpp"
-#include "Jenkins.hpp"
+#include "Pins.h"
 
-// ==== Button setup ====
-#define BUTTON_PIN 5 // GPIO0 (D3 on NodeMCU). Change if needed.
-bool lastButtonState = HIGH;
+#include "Systems/Sleep.h"
+
+#include "Systems/Button.h"
+#include "Systems/Speaker.h"
+#include "Systems/NFC.h"
+
+Sleep sleep;
+
+Button button(BUTTON_PIN);
+Speaker speaker(SPEAKER_PIN);
+Nfc nfc(SPI_RST_PIN, SPI_SDA_PIN);
+
+void updateSystems();
+void checkActions();
 
 void setup()
 {
     Serial.begin(115200);
-    delay(100);
     Serial.println();
-
-    // Configure button
-    pinMode(BUTTON_PIN, INPUT_PULLUP);
-
-    // Start WiFi
-    WiFi.mode(WIFI_STA);
-    connectToBestWiFi();
 }
 
 void loop()
 {
-    bool buttonState = digitalRead(BUTTON_PIN);
-    if (lastButtonState == HIGH && buttonState == LOW)
+    updateSystems();
+    checkActions();
+}
+
+void updateSystems()
+{
+    bool isActive = false;
+
+    isActive = speaker.loop() || isActive;
+    isActive = nfc.loop() || isActive;
+
+    sleep.check(isActive);
+}
+
+void checkActions()
+{
+    switch (button.checkAction())
     {
-        Serial.println("Button pressed, triggering Jenkins build...");
-
-        if (WiFi.status() != WL_CONNECTED)
-        {
-            Serial.println("WiFi disconnected, rescanning...");
-            connectToBestWiFi();
-        }
-
-        triggerJenkinsBuild();
-        delay(5000);
+    case ButtonAction::Tap:
+        speaker.speak(SpeakerSignal::Beep);
+        // TODO: Start action
+        break;
+    case ButtonAction::TripleTap:
+        speaker.speak(SpeakerSignal::TripleBeep);
+        // TODO: Start action
+        break;
+    case ButtonAction::Hold:
+        speaker.speak(SpeakerSignal::LongBeep);
+        // TODO: Start action
+        break;
+    default:
+        return;
     }
 
-    lastButtonState = buttonState;
-    delay(50); // debounce
+    sleep.wake();
 }
