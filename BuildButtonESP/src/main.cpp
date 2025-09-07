@@ -1,4 +1,6 @@
 #include <Arduino.h>
+#include <Esp.h>
+#include <SPI.h>
 
 #include "Pins.h"
 #include "WiFiManager.h"
@@ -19,6 +21,8 @@ Button button(BUTTON_PIN);
 Speaker speaker(SPEAKER_PIN);
 Nfc nfc(SPI_RST_PIN, SPI_SDA_PIN);
 
+void checkOverflow();
+
 void updateSystems();
 void checkActions();
 
@@ -27,15 +31,28 @@ void setup()
     Serial.begin(115200);
     Serial.println();
 
+    SPI.begin();
+
     wifi.init();
 
     updater.init(&wifi, &speaker);
+    nfc.init(&speaker);
 }
 
 void loop()
 {
+    checkOverflow();
+
     updateSystems();
     checkActions();
+}
+
+void checkOverflow()
+{
+    if (millis() < 2e18)
+        return;
+
+    ESP.restart();
 }
 
 void updateSystems()
@@ -60,8 +77,7 @@ void checkActions()
         // TODO: Start action
         break;
     case ButtonAction::TripleTap:
-        speaker.speak(SpeakerSignal::TripleBeep);
-        // TODO: Start action
+        nfc.toggle();
         break;
     case ButtonAction::Hold:
         updater.toggle();

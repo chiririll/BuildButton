@@ -6,9 +6,9 @@ Speaker::Speaker(uint8_t pin) : m_pin(pin)
     digitalWrite(m_pin, HIGH);
 }
 
-void Speaker::speak(SpeakerSignal signal)
+void Speaker::speak(uint pattern)
 {
-    m_pattern = (int)signal;
+    m_pattern = pattern;
 
     m_isActive = true;
     m_nextToggle = millis();

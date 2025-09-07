@@ -31,29 +31,35 @@ void Updater::init(WiFiManager *wifi, Speaker *speaker)
 void Updater::toggle()
 {
     if (m_isActive)
-        stop();
+        end();
     else
-        start();
+        begin();
 }
 
-void Updater::start()
+void Updater::begin()
 {
+    if (m_isActive)
+        return;
+
     m_wifi->setClient(WiFiClientType::Updater, true);
 
     ArduinoOTA.begin();
 
-    m_speaker->speak(SpeakerSignal::OTAEnable);
+    m_speaker->speak(enableSignal);
 
     m_isActive = true;
 }
 
-void Updater::stop()
+void Updater::end()
 {
+    if (!m_isActive)
+        return;
+
     ArduinoOTA.end();
 
     m_wifi->setClient(WiFiClientType::Updater, false);
 
-    m_speaker->speak(SpeakerSignal::OTADisable);
+    m_speaker->speak(disableSignal);
 
     m_isActive = false;
 }

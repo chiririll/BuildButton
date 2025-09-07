@@ -20,18 +20,18 @@ public:
     ButtonAction checkAction();
 
 private:
-    static const unsigned long debounceDelay = 50;
-    static const unsigned long holdTime = 1200;
-    static const unsigned long multiTapGap = 600;
-    static const unsigned long cooldownTime = 2000;
+    static const ulong debounceDelay = 50;
+    static const ulong holdTime = 1200;
+    static const ulong multiTapGap = 600;
+    static const ulong cooldownTime = 2000;
 
     uint8_t m_pin;
 
     bool m_lastState;
 
-    unsigned long m_pressStart;
-    unsigned long m_nextTime;
-    unsigned long m_resetTime;
+    ulong m_pressStart;
+    ulong m_nextTime;
+    ulong m_resetTime;
 
     uint8_t m_tapCount;
 

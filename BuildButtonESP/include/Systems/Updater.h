@@ -16,10 +16,13 @@ public:
 
     void toggle();
 
-    void start();
-    void stop();
+    void begin();
+    void end();
 
 private:
+    const uint enableSignal = 0b00001011;
+    const uint disableSignal = 0b00101011;
+
     WiFiManager *m_wifi;
     Speaker *m_speaker;
 
