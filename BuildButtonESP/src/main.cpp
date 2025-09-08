@@ -12,9 +12,9 @@
 #include "Systems/Speaker.h"
 #include "Systems/NFC.h"
 
-WiFiManager wifi;
-
 Sleep sleep;
+StorageManager storage;
+WiFiManager wifi;
 Updater updater;
 
 Button button(BUTTON_PIN);
@@ -33,7 +33,7 @@ void setup()
 
     SPI.begin();
 
-    wifi.init();
+    wifi.init(&storage);
 
     updater.init(&wifi, &speaker);
     nfc.init(&speaker);
