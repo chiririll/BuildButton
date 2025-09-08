@@ -5,7 +5,7 @@ bool StorageManager::begin()
     if (m_isActive)
         return true;
 
-    m_isActive = SPIFFS.begin();
+    m_isActive = LittleFS.begin();
     return m_isActive;
 }
 
@@ -14,6 +14,6 @@ void StorageManager::end()
     if (!m_isActive)
         return;
 
-    SPIFFS.end();
+    LittleFS.end();
     m_isActive = false;
 }

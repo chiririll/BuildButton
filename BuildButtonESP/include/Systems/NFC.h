@@ -5,14 +5,17 @@
 #include <MFRC522.h>
 #include <NfcAdapter.h>
 
+#include "StorageManager.h"
+#include "Records/WiFiRecord.h"
+
 #include "Systems/Speaker.h"
 
 class Nfc
 {
 public:
-    Nfc(uint8_t rstPin, uint8_t sdaPin);
+    Nfc(uint8_t rstPin, uint8_t sdaPin) : m_mfrc(rstPin, sdaPin), m_nfc(&m_mfrc) {}
 
-    void init(Speaker *speaker);
+    void init(StorageManager *storage, Speaker *speaker);
 
     bool loop();
 
@@ -30,6 +33,7 @@ private:
     const ulong queryInterval = 200;
     const ulong enableDuration = 10000;
 
+    StorageManager *m_storage;
     Speaker *m_speaker;
 
     MFRC522 m_mfrc;
@@ -41,6 +45,12 @@ private:
     ulong m_timeout;
 
     bool tryRead();
+
+    void handleMediaRecord(NdefRecord *record);
+
+    void handleWiFiRecord(NdefRecord *record);
+    void handleActionRecord(NdefRecord *record);
+    void handleCommandRecord(NdefRecord *record);
 };
 
 #endif // NFC_H

@@ -36,7 +36,7 @@ void setup()
     wifi.init(&storage);
 
     updater.init(&wifi, &speaker);
-    nfc.init(&speaker);
+    nfc.init(&storage, &speaker);
 }
 
 void loop()
