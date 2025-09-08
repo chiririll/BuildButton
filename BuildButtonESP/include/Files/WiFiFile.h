@@ -10,6 +10,8 @@ public:
     void open();
     void close();
 
+    int get_networksCount() { return m_networksCount; }
+
     String getPassword(const String *ssid);
     void setPassword(const String *ssid, const String *password);
 

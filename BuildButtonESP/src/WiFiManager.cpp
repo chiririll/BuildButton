@@ -63,11 +63,13 @@ void WiFiManager::connect()
         String foundSSID = WiFi.SSID(i);
         int foundRSSI = WiFi.RSSI(i);
 
-        if (foundRSSI <= bestRSSI)
-            continue;
+        Serial.printf("Found network: %s (RSSI %d)\n", foundSSID.c_str(), foundRSSI);
 
         auto foundPassword = m_storage->wifiFile()->getPassword(&foundSSID);
         if (foundPassword.isEmpty())
+            continue;
+
+        if (foundRSSI <= bestRSSI)
             continue;
 
         Serial.printf("Found known network: %s (RSSI %d)\n", foundSSID.c_str(), foundRSSI);

@@ -5,20 +5,27 @@ void WiFiFile::open()
     if (m_isOpened)
         return;
 
-    m_file = LittleFS.open(filename, "w+");
+    m_file = LittleFS.open(filename, "r+");
     if (!m_file)
+    {
+        Serial.println("Failed to open wifi credentials file!");
         return;
+    }
 
     char buffer[1];
     auto readCount = m_file.readBytes(buffer, sizeof(buffer));
 
     if (!readCount)
     {
+        Serial.println("Failed to read wifi credentials file!");
+
+        m_networksCount = 0;
+        buffer[0] = m_networksCount;
         m_file.seek(0);
-        m_file.write(0);
+        m_file.write(m_networksCount);
     }
 
-    m_networksCount = readCount > 0 ? (uint8_t)buffer[0] : 0;
+    m_networksCount = (uint8_t)buffer[0];
     m_isOpened = true;
 }
 
@@ -38,7 +45,7 @@ String WiFiFile::getPassword(const String *ssid)
     if (!m_networksCount)
         return "";
 
-    m_file.seek(1, SeekMode::SeekSet);
+    m_file.seek(1);
     for (size_t i = 0; i < m_networksCount; i++)
     {
         auto i_ssid = m_file.readStringUntil('\0');
@@ -68,6 +75,6 @@ void WiFiFile::setPassword(const String *ssid, const String *password)
 
     m_networksCount++;
 
-    m_file.seek(0, SeekMode::SeekSet);
+    m_file.seek(0);
     m_file.write(m_networksCount);
 }

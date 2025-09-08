@@ -162,7 +162,10 @@ void Nfc::handleWiFiRecord(NdefRecord *record)
     m_storage->wifiFile()->setPassword(wifiRecord.get_ssid(), wifiRecord.get_password());
 
     auto savedPassword = m_storage->wifiFile()->getPassword(wifiRecord.get_ssid());
-    Serial.printf("Saved network: SSID='%s', Password='%s'\n", wifiRecord.get_ssid()->c_str(), savedPassword.c_str());
+    Serial.printf("Saved network: SSID='%s', Password='%s', (%d total)\n",
+                  wifiRecord.get_ssid()->c_str(),
+                  savedPassword.c_str(),
+                  m_storage->wifiFile()->get_networksCount());
 }
 
 void Nfc::handleActionRecord(NdefRecord *record)
