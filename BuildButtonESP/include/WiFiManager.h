@@ -16,6 +16,11 @@ enum class WiFiClientType
 class WiFiManager
 {
 public:
+    WiFiManager()
+    {
+        p_instance = this;
+    }
+
     void init(StorageManager *storage);
     bool loop();
 
@@ -23,12 +28,17 @@ public:
     void checkClients();
 
 private:
+    static WiFiManager *p_instance;
+
     StorageManager *m_storage;
 
     uint8_t m_clients;
 
     void connect();
     void disconnect();
+
+    static void onScanCompleted(int n);
+    void connectToKnownNetwork(int scannedCount);
 };
 
 #endif // WIFI_MANAGER_H

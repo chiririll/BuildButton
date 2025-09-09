@@ -1,5 +1,7 @@
 #include "WiFiManager.h"
 
+WiFiManager *WiFiManager::p_instance = nullptr;
+
 void WiFiManager::init(StorageManager *storage)
 {
     m_storage = storage;
@@ -42,8 +44,21 @@ void WiFiManager::connect()
 
     Serial.println("Scanning for WiFi networks...");
 
-    auto n = WiFi.scanNetworks();
+    WiFi.scanNetworksAsync(onScanCompleted);
+}
 
+void WiFiManager::disconnect()
+{
+    if (WiFi.status() != WL_CONNECTED)
+        return;
+
+    Serial.println("Disabling WiFi...");
+
+    WiFi.disconnect(true);
+}
+
+void WiFiManager::onScanCompleted(int n)
+{
     if (!n)
     {
         Serial.println("No networks found.");
@@ -51,33 +66,41 @@ void WiFiManager::connect()
         return;
     }
 
-    m_storage->begin();
-    m_storage->wifiFile()->open();
+    p_instance->connectToKnownNetwork(n);
+}
 
+void WiFiManager::connectToKnownNetwork(int scannedCount)
+{
     int bestRSSI = -999;
     String ssid;
     String password;
 
-    for (int i = 0; i < n; i++)
+    m_storage->begin();
+    m_storage->wifiFile()->open();
+
+    for (int i = 0; i < scannedCount; i++)
     {
         String foundSSID = WiFi.SSID(i);
         int foundRSSI = WiFi.RSSI(i);
-
-        Serial.printf("Found network: %s (RSSI %d)\n", foundSSID.c_str(), foundRSSI);
-
         auto foundPassword = m_storage->wifiFile()->getPassword(&foundSSID);
-        if (foundPassword.isEmpty())
-            continue;
+        bool isKnown = !foundPassword.isEmpty();
 
-        if (foundRSSI <= bestRSSI)
-            continue;
+        Serial.printf("Found ");
+        if (isKnown)
+            Serial.printf("known ");
+        Serial.printf("network: %s (RSSI %d)\n", foundSSID.c_str(), foundRSSI);
 
-        Serial.printf("Found known network: %s (RSSI %d)\n", foundSSID.c_str(), foundRSSI);
+        if (!isKnown || foundRSSI <= bestRSSI)
+            continue;
 
         ssid = foundSSID;
         password = foundPassword;
+
         bestRSSI = foundRSSI;
     }
+
+    m_storage->wifiFile()->close();
+    m_storage->end();
 
     if (ssid.isEmpty())
     {
@@ -88,15 +111,4 @@ void WiFiManager::connect()
 
     Serial.printf("Connecting to best network: %s\n", ssid.c_str());
     WiFi.begin(ssid, password);
-
-    m_storage->wifiFile()->close();
-    m_storage->end();
-}
-
-void WiFiManager::disconnect()
-{
-    if (WiFi.status() != WL_CONNECTED)
-        return;
-
-    WiFi.disconnect(true);
 }
