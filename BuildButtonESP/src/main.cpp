@@ -1,30 +1,4 @@
-#include <Arduino.h>
-#include <Esp.h>
-#include <SPI.h>
-
-#include "Pins.h"
-#include "WiFiManager.h"
-
-#include "Systems/Sleep.h"
-#include "Systems/Updater.h"
-
-#include "Systems/Button.h"
-#include "Systems/Speaker.h"
-#include "Systems/NFC.h"
-
-Sleep sleep;
-StorageManager storage;
-WiFiManager wifi;
-Updater updater;
-
-Button button(BUTTON_PIN);
-Speaker speaker(SPEAKER_PIN);
-Nfc nfc(SPI_RST_PIN, SPI_SDA_PIN);
-
-void checkOverflow();
-
-void updateSystems();
-void checkActions();
+#include "main.h"
 
 void setup()
 {
@@ -37,6 +11,8 @@ void setup()
 
     updater.init(&wifi, &speaker);
     nfc.init(&storage, &speaker);
+
+    runner.init(&wifi, &storage);
 }
 
 void loop()
@@ -65,6 +41,8 @@ void updateSystems()
     isActive = updater.loop() || isActive;
     isActive = nfc.loop() || isActive;
 
+    isActive = runner.loop() || isActive;
+
     sleep.check(isActive);
 }
 
@@ -74,14 +52,17 @@ void checkActions()
     {
     case ButtonAction::Tap:
         speaker.speak(SpeakerSignal::Beep);
-        // TODO: Start action
+        runner.run();
         break;
+
     case ButtonAction::TripleTap:
         nfc.toggle();
         break;
+
     case ButtonAction::Hold:
         updater.toggle();
         break;
+
     default:
         return;
     }
