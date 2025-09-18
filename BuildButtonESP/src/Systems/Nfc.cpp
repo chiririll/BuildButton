@@ -19,6 +19,8 @@ void Nfc::begin(bool quiet)
         m_speaker->speak(enableSignal);
     }
 
+    Serial.println("Enabling nfc module...");
+
     m_mfrc.PCD_SoftPowerUp();
     m_nfc.begin();
 
@@ -38,6 +40,8 @@ void Nfc::end(bool quiet)
     {
         m_speaker->speak(disableSignal);
     }
+
+    Serial.println("Disabling nfc module...");
 
     m_mfrc.PCD_SoftPowerDown();
 
@@ -90,10 +94,14 @@ bool Nfc::tryRead()
     if (!m_nfc.tagPresent())
         return false;
 
-    NfcTag tag = m_nfc.read();
+    auto tag = m_nfc.read();
+    Serial.println("Found tag: " + tag.getUidString());
 
     if (!tag.hasNdefMessage())
+    {
+        m_nfc.haltTag();
         return false;
+    }
 
     NdefMessage message = tag.getNdefMessage();
     int recordCount = message.getRecordCount();
@@ -170,10 +178,10 @@ void Nfc::handleWiFiRecord(NdefRecord *record)
 
 void Nfc::handleActionRecord(NdefRecord *record)
 {
-    Serial.println("Action not implemented");
+    Serial.println("Action is not implemented");
 }
 
 void Nfc::handleCommandRecord(NdefRecord *record)
 {
-    Serial.println("Commands not implemented");
+    Serial.println("Commands are not implemented");
 }
