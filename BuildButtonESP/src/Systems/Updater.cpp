@@ -41,7 +41,7 @@ void Updater::begin()
     if (m_isActive)
         return;
 
-    Serial.println("Enabling OTA update module...");
+    Serial.println("OTA Update module enabled");
 
     m_wifi->setClient(WiFiClientType::Updater, true);
 
@@ -57,7 +57,7 @@ void Updater::end()
     if (!m_isActive)
         return;
 
-    Serial.println("Disabling OTA update module...");
+    Serial.println("OTA Update module disabled");
 
     ArduinoOTA.end();
 

@@ -1,9 +1,10 @@
 #include "Systems/NFC.h"
 
-void Nfc::init(StorageManager *storage, Speaker *speaker)
+void Nfc::init(StorageManager *storage, Speaker *speaker, ActionRunner *runner)
 {
     m_storage = storage;
     m_speaker = speaker;
+    m_runner = runner;
 
     m_mfrc.PCD_Init();
     m_mfrc.PCD_SoftPowerDown();
@@ -19,7 +20,7 @@ void Nfc::begin(bool quiet)
         m_speaker->speak(enableSignal);
     }
 
-    Serial.println("Enabling nfc module...");
+    Serial.println("NFC Module enabled");
 
     m_mfrc.PCD_SoftPowerUp();
     m_nfc.begin();
@@ -41,7 +42,7 @@ void Nfc::end(bool quiet)
         m_speaker->speak(disableSignal);
     }
 
-    Serial.println("Disabling nfc module...");
+    Serial.println("NFC Module disabled");
 
     m_mfrc.PCD_SoftPowerDown();
 
@@ -138,14 +139,14 @@ void Nfc::handleMediaRecord(NdefRecord *record)
 
     if (type.startsWith("btn/"))
     {
-        auto actionType = type.substring(4);
+        auto actionType = type.substring(4, type.indexOf('\0'));
         handleActionRecord(&actionType, record);
         return;
     }
 
     if (type.startsWith("btnc/"))
     {
-        auto commandType = type.substring(5);
+        auto commandType = type.substring(5, type.indexOf('\0'));
         handleCommandRecord(&commandType, record);
         return;
     }
@@ -180,6 +181,8 @@ void Nfc::handleActionRecord(const String *type, NdefRecord *record)
 
     auto payload = String((char *)record->getPayload());
     m_storage->actionFile()->save(type, &payload);
+
+    m_runner->checkAction();
 
     m_storage->end();
 }

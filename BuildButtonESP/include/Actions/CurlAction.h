@@ -7,13 +7,15 @@
 
 #include "Actions/IAction.h"
 
-class HttpPostAction : IAction
+class CurlAction : IAction
 {
 public:
     using IAction::IAction;
 
     void run() override;
     bool loop() override;
+
+    void setPayload(const String *payload) override;
 
 private:
     bool m_pending;

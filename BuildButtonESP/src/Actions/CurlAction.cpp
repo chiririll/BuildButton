@@ -1,12 +1,12 @@
-#include "Actions/HttpPostAction.h"
+#include "Actions/CurlAction.h"
 
-void HttpPostAction::run()
+void CurlAction::run()
 {
     m_systems->m_wifi->setClient(WiFiClientType::ActionRunner, true);
     m_pending = true;
 }
 
-bool HttpPostAction::loop()
+bool CurlAction::loop()
 {
     if (!m_pending)
         return false;
@@ -21,7 +21,12 @@ bool HttpPostAction::loop()
     return false;
 }
 
-void HttpPostAction::send()
+void CurlAction::setPayload(const String *payload)
+{
+    // TODO: Parse
+}
+
+void CurlAction::send()
 {
     WiFiClientSecure client;
     client.setInsecure();

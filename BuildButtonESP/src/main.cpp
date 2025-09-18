@@ -10,9 +10,9 @@ void setup()
     wifi.init(&storage);
 
     updater.init(&wifi, &speaker);
-    nfc.init(&storage, &speaker);
+    nfc.init(&storage, &speaker, &runner);
 
-    runner.init(&wifi, &storage);
+    runner.init(&wifi, &storage, &speaker);
 }
 
 void loop()
@@ -51,7 +51,6 @@ void checkActions()
     switch (button.checkAction())
     {
     case ButtonAction::Tap:
-        speaker.speak(SpeakerSignal::Beep);
         runner.run();
         break;
 

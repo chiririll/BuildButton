@@ -2,8 +2,7 @@
 
 void ActionFile::save(const String *type, const String *payload)
 {
-    Serial.print("Saving data for action ");
-    Serial.println(type->c_str());
+    Serial.printf("Saving data for action %s\n", type->c_str());
 
     LittleFS.remove(actionFile);
 
@@ -15,6 +14,7 @@ void ActionFile::save(const String *type, const String *payload)
     }
 
     fAction.write(type->c_str());
+    fAction.write('\0');
     fAction.close();
 
     LittleFS.remove(payloadFile);
@@ -27,6 +27,7 @@ void ActionFile::save(const String *type, const String *payload)
     }
 
     fPayload.write(payload->c_str());
+    fAction.write('\0');
     fPayload.close();
 }
 
@@ -36,7 +37,7 @@ const String ActionFile::getActiveAction()
     if (!fAction)
         return "";
 
-    return fAction.readString();
+    return fAction.readStringUntil('\0');
 }
 
 const String ActionFile::getPayload()
@@ -45,5 +46,5 @@ const String ActionFile::getPayload()
     if (!fPayload)
         return "";
 
-    return fPayload.readString();
+    return fPayload.readStringUntil('\0');
 }

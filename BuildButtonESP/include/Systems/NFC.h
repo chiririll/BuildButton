@@ -8,6 +8,7 @@
 #include "StorageManager.h"
 #include "Records/WiFiRecord.h"
 
+#include "Actions/ActionRunner.h"
 #include "Systems/Speaker.h"
 
 class Nfc
@@ -15,7 +16,7 @@ class Nfc
 public:
     Nfc(uint8_t rstPin, uint8_t sdaPin) : m_mfrc(rstPin, sdaPin), m_nfc(&m_mfrc) {}
 
-    void init(StorageManager *storage, Speaker *speaker);
+    void init(StorageManager *storage, Speaker *speaker, ActionRunner *runner);
 
     bool loop();
 
@@ -35,6 +36,7 @@ private:
 
     StorageManager *m_storage;
     Speaker *m_speaker;
+    ActionRunner *m_runner;
 
     MFRC522 m_mfrc;
     NfcAdapter m_nfc;
