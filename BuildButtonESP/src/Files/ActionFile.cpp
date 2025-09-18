@@ -14,7 +14,6 @@ void ActionFile::save(const String *type, const String *payload)
     }
 
     fAction.write(type->c_str());
-    fAction.write('\0');
     fAction.close();
 
     LittleFS.remove(payloadFile);
@@ -27,7 +26,6 @@ void ActionFile::save(const String *type, const String *payload)
     }
 
     fPayload.write(payload->c_str());
-    fAction.write('\0');
     fPayload.close();
 }
 
@@ -37,7 +35,7 @@ const String ActionFile::getActiveAction()
     if (!fAction)
         return "";
 
-    return fAction.readStringUntil('\0');
+    return fAction.readString();
 }
 
 const String ActionFile::getPayload()
@@ -46,5 +44,5 @@ const String ActionFile::getPayload()
     if (!fPayload)
         return "";
 
-    return fPayload.readStringUntil('\0');
+    return fPayload.readString();
 }

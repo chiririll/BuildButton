@@ -139,14 +139,16 @@ void Nfc::handleMediaRecord(NdefRecord *record)
 
     if (type.startsWith("btn/"))
     {
-        auto actionType = type.substring(4, type.indexOf('\0'));
+        const int lPrefix = 4;
+        auto actionType = type.substring(lPrefix, record->getTypeLength());
         handleActionRecord(&actionType, record);
         return;
     }
 
     if (type.startsWith("btnc/"))
     {
-        auto commandType = type.substring(5, type.indexOf('\0'));
+        const int lPrefix = 5;
+        auto commandType = type.substring(lPrefix, record->getTypeLength());
         handleCommandRecord(&commandType, record);
         return;
     }
@@ -180,6 +182,8 @@ void Nfc::handleActionRecord(const String *type, NdefRecord *record)
     m_storage->begin();
 
     auto payload = String((char *)record->getPayload());
+    payload.substring(0, record->getPayloadLength());
+
     m_storage->actionFile()->save(type, &payload);
 
     m_runner->checkAction();
