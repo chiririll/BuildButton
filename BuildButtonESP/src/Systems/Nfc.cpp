@@ -128,16 +128,9 @@ bool Nfc::tryRead()
 
 void Nfc::handleMediaRecord(NdefRecord *record)
 {
-    auto length = record->getTypeLength();
-    auto typeArr = record->getType();
+    auto type = String((char *)record->getType());
 
-    String type;
-    for (uint i = 0; i < length; i++)
-    {
-        type += (char)typeArr[i];
-    }
-
-    if (type.equals("application/vnd.wfa.wsc"))
+    if (type.startsWith("application/vnd.wfa.wsc"))
     {
         handleWiFiRecord(record);
         return;
@@ -145,13 +138,15 @@ void Nfc::handleMediaRecord(NdefRecord *record)
 
     if (type.startsWith("btn/"))
     {
-        handleActionRecord(record);
+        auto actionType = type.substring(4);
+        handleActionRecord(&actionType, record);
         return;
     }
 
     if (type.startsWith("btnc/"))
     {
-        handleCommandRecord(record);
+        auto commandType = type.substring(5);
+        handleCommandRecord(&commandType, record);
         return;
     }
 }
@@ -174,14 +169,22 @@ void Nfc::handleWiFiRecord(NdefRecord *record)
                   wifiRecord.get_ssid()->c_str(),
                   savedPassword.c_str(),
                   m_storage->wifiFile()->get_networksCount());
+
+    m_storage->wifiFile()->close();
+    m_storage->end();
 }
 
-void Nfc::handleActionRecord(NdefRecord *record)
+void Nfc::handleActionRecord(const String *type, NdefRecord *record)
 {
-    Serial.println("Action is not implemented");
+    m_storage->begin();
+
+    auto payload = String((char *)record->getPayload());
+    m_storage->actionFile()->save(type, &payload);
+
+    m_storage->end();
 }
 
-void Nfc::handleCommandRecord(NdefRecord *record)
+void Nfc::handleCommandRecord(const String *type, NdefRecord *record)
 {
-    Serial.println("Commands are not implemented");
+    Serial.println("Command " + *type + " is not implemented");
 }

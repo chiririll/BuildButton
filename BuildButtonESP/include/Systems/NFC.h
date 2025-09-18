@@ -49,8 +49,8 @@ private:
     void handleMediaRecord(NdefRecord *record);
 
     void handleWiFiRecord(NdefRecord *record);
-    void handleActionRecord(NdefRecord *record);
-    void handleCommandRecord(NdefRecord *record);
+    void handleActionRecord(const String *type, NdefRecord *record);
+    void handleCommandRecord(const String *type, NdefRecord *record);
 };
 
 #endif // NFC_H

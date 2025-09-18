@@ -5,7 +5,8 @@ void WiFiFile::open()
     if (m_isOpened)
         return;
 
-    m_file = LittleFS.open(filename, "r+");
+    auto mode = LittleFS.exists(filename) ? "r+" : "w+";
+    m_file = LittleFS.open(filename, mode);
     if (!m_file)
     {
         Serial.println("Failed to open wifi credentials file!");
