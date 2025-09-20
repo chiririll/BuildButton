@@ -6,7 +6,7 @@ void ActionFile::save(const String *type, const String *payload)
 
     LittleFS.remove(actionFile);
 
-    auto fAction = LittleFS.open(actionFile, "w+");
+    auto fAction = LittleFS.open(actionFile, "w");
     if (!fAction)
     {
         Serial.println("Failed to open action file!");
@@ -18,7 +18,7 @@ void ActionFile::save(const String *type, const String *payload)
 
     LittleFS.remove(payloadFile);
 
-    auto fPayload = LittleFS.open(payloadFile, "w+");
+    auto fPayload = LittleFS.open(payloadFile, "w");
     if (!fPayload)
     {
         Serial.println("Failed to open payload file!");

@@ -182,7 +182,7 @@ void Nfc::handleActionRecord(const String *type, NdefRecord *record)
     m_storage->begin();
 
     auto payload = String((char *)record->getPayload());
-    payload.substring(0, record->getPayloadLength());
+    payload = payload.substring(0, record->getPayloadLength());
 
     m_storage->actionFile()->save(type, &payload);
 
