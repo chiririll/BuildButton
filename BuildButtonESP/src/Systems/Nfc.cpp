@@ -7,6 +7,7 @@ void Nfc::init(StorageManager *storage, Speaker *speaker, ActionRunner *runner)
     m_runner = runner;
 
     m_mfrc.PCD_Init();
+    delay(20);
     m_mfrc.PCD_SoftPowerDown();
 }
 
@@ -20,10 +21,12 @@ void Nfc::begin(bool quiet)
         m_speaker->speak(enableSignal);
     }
 
-    Serial.println("NFC Module enabled");
-
     m_mfrc.PCD_SoftPowerUp();
+    delay(20);
+
     m_nfc.begin();
+
+    Serial.println("NFC Module enabled");
 
     auto now = millis();
     m_nextQuery = now + startupDelay;

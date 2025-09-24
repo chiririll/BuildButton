@@ -27,9 +27,6 @@ Nfc nfc(SPI_RST_PIN, SPI_SDA_PIN);
 
 ActionRunner runner;
 
-void setup();
-void loop();
-
 void checkOverflow();
 
 void updateSystems();

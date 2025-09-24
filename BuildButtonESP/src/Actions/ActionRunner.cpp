@@ -16,6 +16,7 @@ void ActionRunner::run()
 {
     if (m_action == NULL)
     {
+        Serial.println("No active action selected");
         m_systems.m_speaker->speak(SpeakerSignal::LongBeep);
         return;
     }

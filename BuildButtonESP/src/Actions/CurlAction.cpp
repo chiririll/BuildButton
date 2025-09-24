@@ -23,6 +23,8 @@ bool CurlAction::loop()
 
 void CurlAction::setPayload(const String *payload)
 {
+    Serial.println("Loading payload for curl:");
+    Serial.println(payload->c_str());
     // TODO: Parse
 }
 
