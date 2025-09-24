@@ -1,32 +1,42 @@
-#ifndef HTTP_POST_ACTION_H
-#define HTTP_POST_ACTION_H
+#ifndef CURL_ACTION_H
+#define CURL_ACTION_H
 
 #include <Arduino.h>
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
 
-#include "Actions/IAction.h"
+#include "Actions/WiFiAction.h"
 
-class CurlAction : IAction
+class CurlRequestData
 {
 public:
-    using IAction::IAction;
+    enum class RequestType
+    {
+        GET,
+        POST,
+    };
 
-    void run() override;
-    bool loop() override;
+public:
+    RequestType type;
+
+    String url;
+    String payload;
+};
+
+class CurlAction : WiFiAction
+{
+public:
+    using WiFiAction::WiFiAction;
 
     void setPayload(const String *payload) override;
 
-private:
-    bool m_pending;
+protected:
+    void run_wifi() override;
 
+private:
     String m_url;
     String m_contentType;
     String m_user;
     String m_password;
     String m_payload;
-
-    void send();
 };
 
-#endif // HTTP_POST_ACTION_H
+#endif // CURL_ACTION_H

@@ -1,26 +1,5 @@
 #include "Actions/CurlAction.h"
 
-void CurlAction::run()
-{
-    m_systems->m_wifi->setClient(WiFiClientType::ActionRunner, true);
-    m_pending = true;
-}
-
-bool CurlAction::loop()
-{
-    if (!m_pending)
-        return false;
-
-    if (WiFi.status() != WL_CONNECTED)
-        return true;
-
-    m_pending = false;
-    send();
-    m_systems->m_wifi->setClient(WiFiClientType::ActionRunner, false);
-
-    return false;
-}
-
 void CurlAction::setPayload(const String *payload)
 {
     Serial.println("Loading payload for curl:");
@@ -28,7 +7,7 @@ void CurlAction::setPayload(const String *payload)
     // TODO: Parse
 }
 
-void CurlAction::send()
+void CurlAction::run_wifi()
 {
     WiFiClientSecure client;
     client.setInsecure();

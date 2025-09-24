@@ -24,10 +24,10 @@ public:
     }
 };
 
-class IAction
+class BaseAction
 {
 public:
-    IAction(ActionSystems *systems) : m_systems(systems) {}
+    BaseAction(ActionSystems *systems) : m_systems(systems) {}
 
     virtual void run() = 0;
     virtual bool loop() = 0;

@@ -52,11 +52,24 @@ void ActionRunner::checkAction()
 
 void ActionRunner::setAction(const String *type, const String *payload)
 {
-    if (type->startsWith("curl"))
-    {
-        m_curl.setPayload(payload);
-        m_action = (IAction *)&m_curl;
+    m_action = getAction(type);
 
+    if (!m_action)
         return;
-    }
+
+    m_action->setPayload(payload);
+}
+
+BaseAction *ActionRunner::getAction(const String *type)
+{
+    if (type->startsWith("curl"))
+        return (BaseAction *)&m_curl;
+
+    if (type->startsWith("telegram"))
+        return (BaseAction *)&m_telegram;
+
+    if (type->startsWith("jenkins"))
+        return (BaseAction *)&m_jenkins;
+
+    return NULL;
 }
