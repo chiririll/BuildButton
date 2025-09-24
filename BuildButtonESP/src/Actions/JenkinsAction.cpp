@@ -4,8 +4,18 @@ void JenkinsAction::setPayload(const String *payload)
 {
     auto split = payload->indexOf('\n');
 
-    m_projectName = payload->substring(0, split);
-    m_parameters = payload->substring(split + 1);
+    if (split < 0)
+    {
+        m_projectName = *payload;
+        m_parameters = "";
+    }
+    else
+    {
+        m_projectName = payload->substring(0, split);
+        m_parameters = payload->substring(split + 1);
+        if (m_parameters.length() <= 0)
+            m_parameters = "?";
+    }
 
     Serial.println("Jenkins payload:");
 
@@ -24,7 +34,11 @@ void JenkinsAction::run_wifi()
     HTTPClient https;
     https.setAuthorization(JENKINS_USER, JENKINS_PASSWORD);
 
-    String url = JENKINS_URL + "job/" + m_projectName + (m_parameters.length() > 0 ? "buildWithParameters" : "build");
+    String url = JENKINS_URL + "job/" + m_projectName + "/" + (m_parameters.length() > 0 ? "buildWithParameters" : "build") + m_parameters;
+
+    Serial.print("Jenkins URL: ");
+    Serial.println(url.c_str());
+
     https.begin(client, url);
 
     int httpCode = https.POST("");

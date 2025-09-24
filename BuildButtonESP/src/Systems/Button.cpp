@@ -3,7 +3,7 @@
 Button::Button(uint8_t pin) : m_pin(pin)
 {
     pinMode(m_pin, INPUT_PULLUP);
-    m_lastState = true;
+    m_lastState = digitalRead(m_pin);
 }
 
 ButtonAction Button::checkAction()
