@@ -17,6 +17,12 @@ public:
 
 protected:
     void run_wifi() override;
+
+private:
+    bool m_parametrized;
+
+    String m_projectName;
+    String m_parameters;
 };
 
 #endif // JENKINS_ACTION_H
