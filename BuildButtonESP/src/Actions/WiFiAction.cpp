@@ -16,7 +16,14 @@ bool WiFiAction::loop()
 
     m_pending = false;
 
-    run_wifi();
+    if (run_wifi())
+    {
+        m_systems->m_speaker->speak(SpeakerSignal::Beep);
+    }
+    else
+    {
+        m_systems->m_speaker->speak(SpeakerSignal::ErrorTone);
+    }
 
     m_systems->m_wifi->setClient(WiFiClientType::ActionRunner, false);
     return false;

@@ -29,7 +29,7 @@ public:
     void setPayload(const String *payload) override;
 
 protected:
-    void run_wifi() override;
+    bool run_wifi() override;
 
 private:
     String m_url;

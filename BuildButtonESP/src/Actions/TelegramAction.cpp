@@ -13,7 +13,7 @@ void TelegramAction::setPayload(const String *payload)
     Serial.println(m_payload);
 }
 
-void TelegramAction::run_wifi()
+bool TelegramAction::run_wifi()
 {
     WiFiClientSecure client;
     client.setInsecure();
@@ -36,4 +36,5 @@ void TelegramAction::run_wifi()
     }
 
     https.end();
+    return httpCode > 0;
 }

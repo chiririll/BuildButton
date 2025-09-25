@@ -7,7 +7,7 @@ void CurlAction::setPayload(const String *payload)
     // TODO: Parse
 }
 
-void CurlAction::run_wifi()
+bool CurlAction::run_wifi()
 {
     WiFiClientSecure client;
     client.setInsecure();
@@ -38,4 +38,5 @@ void CurlAction::run_wifi()
     }
 
     http.end();
+    return resultCode > 0;
 }

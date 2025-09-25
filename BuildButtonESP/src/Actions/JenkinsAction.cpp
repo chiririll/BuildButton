@@ -26,7 +26,7 @@ void JenkinsAction::setPayload(const String *payload)
     Serial.println(m_parameters.length() > 0 ? m_parameters : "<none>");
 }
 
-void JenkinsAction::run_wifi()
+bool JenkinsAction::run_wifi()
 {
     WiFiClientSecure client;
     client.setInsecure();
@@ -53,4 +53,5 @@ void JenkinsAction::run_wifi()
     }
 
     https.end();
+    return httpCode > 0;
 }

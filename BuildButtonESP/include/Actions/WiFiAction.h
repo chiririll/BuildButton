@@ -16,7 +16,7 @@ public:
     virtual void setPayload(const String *payload) override = 0;
 
 protected:
-    virtual void run_wifi() = 0;
+    virtual bool run_wifi() = 0;
 
 private:
     bool m_pending;
